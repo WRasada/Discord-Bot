@@ -188,7 +188,7 @@ class Blackjack:
         # End game if player has 21
         if ph_count == 21:
             return ph, dh, amount, None
-        options = (_("hit"), _("stay"), _("double"))
+        options = (_("hit"), _("stay"), _("double"), _("h"), _("s"), _("d"))
         condition1 = MessagePredicate.lower_contained_in(options, ctx=ctx)
         condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay")), ctx=ctx)
 
@@ -201,11 +201,11 @@ class Blackjack:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
 
-        if choice.content.lower() == _("stay"):
+        if choice.content.lower() == _("stay") or choice.content.lower() == _("s"):
             dh = self.dealer(dh)
             return ph, dh, amount, msg
 
-        if choice.content.lower() == _("double"):
+        if choice.content.lower() == _("double") or choice.content.lower() == _("d"):
             return await self.double_down(ctx, ph, dh, amount, condition2, message=msg)
         else:
             ph, dh, message = await self.bj_loop(ctx, ph, dh, ph_count, condition2, message=msg)
@@ -223,10 +223,10 @@ class Blackjack:
             except asyncio.TimeoutError:
                 return ph, dh, amount, message
 
-            if choice2.content.lower() == _("stay"):
+            if choice2.content.lower() == _("stay") or choice2.content.lower() == _("s"):
                 dh = self.dealer(dh)
                 return ph, dh, amount, message
-            elif choice2.content.lower() == _("hit"):
+            elif choice2.content.lower() == _("hit") or choice2.content.lower() == _("h"):
                 ph, dh, message = await self.bj_loop(
                     ctx, ph, dh, deck.bj_count(ph), condition2, message=message
                 )
