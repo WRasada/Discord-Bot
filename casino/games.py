@@ -190,7 +190,7 @@ class Blackjack:
             return ph, dh, amount, None
         options = (_("hit"), _("stay"), _("double"), _("h"), _("s"), _("d"))
         condition1 = MessagePredicate.lower_contained_in(options, ctx=ctx)
-        condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay")), ctx=ctx)
+        condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay"), _("h"), _("s")), ctx=ctx)
 
         embed = self.bj_embed(ctx, ph, dh, ph_count, initial=True)
         msg = await ctx.send(ctx.author.mention, embed=embed)
