@@ -192,7 +192,7 @@ class Blackjack:
             return ph, dh, amount, None
         options = (_("hit"), _("stay"), _("double"), _("h"), _("s"), _("d"))
         condition1 = MessagePredicate.lower_contained_in(options, ctx=ctx)
-        condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay"), _("h"), _("s")), ctx=ctx)
+        condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay"), _("h"), _("s"), _("d")), ctx=ctx)
 
         embed = self.bj_embed(ctx, ph, dh, ph_count, initial=True)
         msg = await ctx.send(ctx.author.mention, embed=embed)
@@ -203,13 +203,6 @@ class Blackjack:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
 
-        start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
-        pred = ReactionPredicate.yes_or_no(msg, ctx.author)
-        await ctx.bot.wait_for("reaction_add", check=pred)
-        if pred.result is True:
-            await ctx.send(_("You selected yes").format(ctx.author.mention))
-        else:
-           await ctx.send(_("You selected no").format(ctx.author.mention))
         if choice.content.lower() == _("stay") or choice.content.lower() == _("s"):
             dh = self.dealer(dh)
             return ph, dh, amount, msg
