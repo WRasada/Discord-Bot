@@ -18,6 +18,8 @@ from redbot.core.utils.menus import start_adding_reactions
 # Discord
 import discord
 
+import logging
+
 
 _ = Translator("Casino", __file__)
 deck = Deck()
@@ -192,23 +194,28 @@ class Blackjack:
             return ph, dh, amount, None
         options = (_("hit"), _("stay"), _("double"), _("h"), _("s"), _("d"))
         condition1 = MessagePredicate.lower_contained_in(options, ctx=ctx)
-        condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay"), _("h"), _("s"), _("ds")), ctx=ctx)
+        condition2 = MessagePredicate.lower_contained_in((_("hit"), _("stay"), _("h"), _("s")), ctx=ctx)
 
         embed = self.bj_embed(ctx, ph, dh, ph_count, initial=True)
         msg = await ctx.send(ctx.author.mention, embed=embed)
-
+        emojis = ReactionPredicate.ALPHABET_EMOJIS[7]
+        emojis += ReactionPredicate.ALPHABET_EMOJIS[18]
+        emojis += ReactionPredicate.ALPHABET_EMOJIS[3]
+        start_adding_reactions(msg, emojis)
+        pred = ReactionPredicate.with_emojis(emojis, msg, ctx.author)
+        
         try:
-            choice = await ctx.bot.wait_for("message", check=condition1, timeout=35.0)
+            await ctx.bot.wait_for("reaction_add", check=pred, timeout=35.0)
         except asyncio.TimeoutError:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
-
-        if choice.content.lower() == _("stay") or choice.content.lower() == _("s"):
+        
+        if pred.result is 1:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
 
-        if choice.content.lower() == _("double") or choice.content.lower() == _("d"):
-            return await self.double_down(ctx, ph, dh, amount, condition2, message=msg)
+        if pred.result is 2:
+             return await self.double_down(ctx, ph, dh, amount, condition2, message=msg)
         else:
             ph, dh, message = await self.bj_loop(ctx, ph, dh, ph_count, condition2, message=msg)
             dh = self.dealer(dh)
@@ -228,7 +235,7 @@ class Blackjack:
             if choice2.content.lower() == _("stay") or choice2.content.lower() == _("s"):
                 dh = self.dealer(dh)
                 return ph, dh, amount, message
-            elif choice2.content.lower() == _("hit") or choice2.content.lower() == _("h"):
+            elif choice2.content.lower() == _("hit") or choice2.content.lower() == _("hs"):
                 ph, dh, message = await self.bj_loop(
                     ctx, ph, dh, deck.bj_count(ph), condition2, message=message
                 )
@@ -267,7 +274,10 @@ class Blackjack:
         while count < 21:
             ph = deck.deal(hand=ph)
             count = deck.bj_count(hand=ph)
-
+            emojis = ReactionPredicate.ALPHABET_EMOJIS[7]
+            emojis += ReactionPredicate.ALPHABET_EMOJIS[18]
+            emojis += ReactionPredicate.ALPHABET_EMOJIS[3]
+            pred = ReactionPredicate.with_emojis(emojis, message, ctx.author)
             if count >= 21:
                 break
             embed = self.bj_embed(ctx, ph, dh, count)
@@ -276,11 +286,11 @@ class Blackjack:
             else:
                 await ctx.send(content=ctx.author.mention, embed=embed)
             try:
-                resp = await ctx.bot.wait_for("message", check=condition2, timeout=35.0)
+                await ctx.bot.wait_for("reaction_add", check=pred, timeout=35.0)
             except asyncio.TimeoutError:
                 break
 
-            if resp.content.lower() == _("stay"):
+            if pred.result is 1:
                 break
             await asyncio.sleep(1)
 
@@ -305,7 +315,7 @@ class Blackjack:
     def bj_embed(ctx, ph, dh, count1, initial=False, outcome=None):
         hand = _("{}\n**Score:** {}")
         footer = _("Cards in Deck: {}")
-        start = _("**Options:** hit, stayss, or double")
+        start = _("**Options:** hit, stay, or double")
         after = _("**Options:** hit or stay")
         options = "**Outcome:** " + outcome if outcome else start if initial else after
         count2 = deck.bj_count(dh, hole=True) if not outcome else deck.bj_count(dh)
