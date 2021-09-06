@@ -12,6 +12,8 @@ from redbot.core.i18n import Translator
 from redbot.core.errors import BalanceTooHigh
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.predicates import MessagePredicate
+from redbot.core.utils.predicates import ReactionPredicate
+from redbot.core.utils.menus import start_adding_reactions
 
 # Discord
 import discord
