@@ -203,6 +203,13 @@ class Blackjack:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
 
+        start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS)
+        pred = ReactionPredicate.yes_or_no(msg, ctx.author)
+        await ctx.bot.wait_for("reaction_add", check=pred)
+        if pred.result is True:
+            await ctx.send(_("You selected yes").format(ctx.author.mention))
+        else:
+           await ctx.send(_("You selected no").format(ctx.author.mention))
         if choice.content.lower() == _("stay") or choice.content.lower() == _("s"):
             dh = self.dealer(dh)
             return ph, dh, amount, msg
