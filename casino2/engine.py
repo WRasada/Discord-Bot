@@ -284,7 +284,7 @@ class GameEngine(Database):
             )
         else:
             embed.colour = 0xFF0000
-            end = _("Better luck next time! Woo Woo Woo!.\n{}").format(bal_msg)
+            end = _("Better luck next time! Woo Woo Woo!\n{}").format(bal_msg)
         embed.add_field(name="-" * 65, value=end)
         return embed
 
