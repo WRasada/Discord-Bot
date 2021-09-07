@@ -325,9 +325,9 @@ class Blackjack:
         embed = discord.Embed(colour=0xFF0000)
         embed.add_field(
             name=_("{}'s Hand").format(ctx.author.name),
-            value=hand.format(", ".join(deck.fmt_hand(ph)), count1),
+            value=hand.format(", ".join(deck.fmt_hand(ph)), count1), 
+            inline=False
         )
-        embed.add_field(name="\u200b", value="\u200b", inline=False)
         embed.add_field(
             name=_("{}'s Hand").format(ctx.bot.user.name), value=hand.format(dealer_hand, count2)
         )
