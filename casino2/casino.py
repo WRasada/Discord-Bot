@@ -98,12 +98,12 @@ class Casino(Database, commands.Cog):
             try:
                 await ctx.bot.wait_for("reaction_add", check=pred, timeout=35.0)
             except asyncio.TimeoutError:
+                rebet = False
                 break
             if pred.result == 0:
                 await Blackjack(self.old_message_cache).play(ctx, bet)
             elif pred.result == 1:
                 rebet = False
-            await asyncio.sleep(1)
         
     @commands.command()
     @commands.guild_only()
