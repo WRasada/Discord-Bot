@@ -86,24 +86,28 @@ class Casino(Database, commands.Cog):
 
         Blackjack supports doubling down, but not split.
         """
+        can_bet = await bank.can_spend(ctx.author, bet)
         rebet = True
-        await Blackjack(self.old_message_cache).play(ctx, bet)
+        if can_bet: 
+            await Blackjack(self.old_message_cache).play(ctx, bet)
 
-        while rebet == True:
-            msg = await ctx.send("Rebet " + str(bet) + "?")
-            emojis = ReactionPredicate.ALPHABET_EMOJIS[24]
-            emojis += ReactionPredicate.ALPHABET_EMOJIS[13]
-            start_adding_reactions(msg, emojis)
-            pred = ReactionPredicate.with_emojis(emojis, msg, ctx.author)
-            try:
-                await ctx.bot.wait_for("reaction_add", check=pred, timeout=35.0)
-            except asyncio.TimeoutError:
-                rebet = False
-                break
-            if pred.result == 0:
-                await Blackjack(self.old_message_cache).play(ctx, bet)
-            elif pred.result == 1:
-                rebet = False
+            while rebet == True:
+                msg = await ctx.send("Rebet " + str(bet) + "?")
+                emojis = ReactionPredicate.ALPHABET_EMOJIS[24]
+                emojis += ReactionPredicate.ALPHABET_EMOJIS[13]
+                start_adding_reactions(msg, emojis)
+                pred = ReactionPredicate.with_emojis(emojis, msg, ctx.author)
+                try:
+                    await ctx.bot.wait_for("reaction_add", check=pred, timeout=35.0)
+                except asyncio.TimeoutError:
+                    rebet = False
+                    break
+                if pred.result == 0:
+                    await Blackjack(self.old_message_cache).play(ctx, bet)
+                elif pred.result == 1:
+                    rebet = False
+        else: 
+            await ctx.send("You do not have enough credits to cover the bet.")
         
     @commands.command()
     @commands.guild_only()
