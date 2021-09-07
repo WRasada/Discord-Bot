@@ -315,7 +315,7 @@ class Blackjack:
     def bj_embed(ctx, ph, dh, count1, initial=False, outcome=None):
         hand = _("{}\n**Score:** {}")
         footer = _("Cards in Deck: {}")
-        start = _("**Options:** hit, stay, or double")
+        start = _("**Reactions** 'H' = hit, 'S' = stay, 'D' = double")
         after = _("**Options:** hit or stay")
         options = "**Outcome:** " + outcome if outcome else start if initial else after
         count2 = deck.bj_count(dh, hole=True) if not outcome else deck.bj_count(dh)
