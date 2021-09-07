@@ -279,12 +279,12 @@ class GameEngine(Database):
 
         if win:
             embed.colour = 0x00FF00
-            end = _("Congratulations, you just won {} {} {}!\n{}").format(
+            end = _("Woo Woo Woo! You just won {} {} {}!\n{}").format(
                 humanize_number(total), currency, bonus, bal_msg
             )
         else:
             embed.colour = 0xFF0000
-            end = _("Sorry, you didn't win anything.\n{}").format(bal_msg)
+            end = _("Better luck next time! Woo Woo Woo!.\n{}").format(bal_msg)
         embed.add_field(name="-" * 65, value=end)
         return embed
 
