@@ -188,7 +188,7 @@ class Blackjack:
         ph = deck.deal(num=2)
         ph_count = deck.bj_count(ph)
         dh = deck.deal(num=2)
-
+        
         # End game if player has 21
         if ph_count == 21:
             return ph, dh, amount, None
@@ -210,11 +210,11 @@ class Blackjack:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
         
-        if pred.result is 1:
+        if pred.result == 1:
             dh = self.dealer(dh)
             return ph, dh, amount, msg
 
-        if pred.result is 2:
+        if pred.result == 2:
              return await self.double_down(ctx, ph, dh, amount, condition2, message=msg)
         else:
             ph, dh, message = await self.bj_loop(ctx, ph, dh, ph_count, condition2, message=msg)
@@ -290,7 +290,7 @@ class Blackjack:
             except asyncio.TimeoutError:
                 break
 
-            if pred.result is 1:
+            if pred.result == 1:
                 break
             await asyncio.sleep(1)
 
