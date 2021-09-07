@@ -178,7 +178,6 @@ class Blackjack:
         ph, dh, amt, msg = await self.blackjack_game(ctx, bet)
         result = await self.blackjack_results(ctx, amt, ph, dh, message=msg)
         return result
-
     @game_engine(name="Blackjack")
     async def mock(self, ctx, bet, ph, dh):
         result = await self.blackjack_results(ctx, bet, ph, dh)

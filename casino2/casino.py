@@ -22,6 +22,8 @@ from redbot.core.errors import BalanceTooHigh
 from redbot.core.utils import AsyncIter
 from redbot.core.utils.chat_formatting import box, humanize_number
 from redbot.core.utils.predicates import MessagePredicate
+from redbot.core.utils.predicates import ReactionPredicate
+from redbot.core.utils.menus import start_adding_reactions
 
 # Discord
 import discord
@@ -84,8 +86,25 @@ class Casino(Database, commands.Cog):
 
         Blackjack supports doubling down, but not split.
         """
+        rebet = True
         await Blackjack(self.old_message_cache).play(ctx, bet)
 
+        while rebet == True:
+            msg = await ctx.send("Rebet " + str(bet) + "?")
+            emojis = ReactionPredicate.ALPHABET_EMOJIS[24]
+            emojis += ReactionPredicate.ALPHABET_EMOJIS[13]
+            start_adding_reactions(msg, emojis)
+            pred = ReactionPredicate.with_emojis(emojis, msg, ctx.author)
+            try:
+                await ctx.bot.wait_for("reaction_add", check=pred, timeout=35.0)
+            except asyncio.TimeoutError:
+                break
+            if pred.result == 0:
+                await Blackjack(self.old_message_cache).play(ctx, bet)
+            elif pred.result == 1:
+                rebet = False
+            await asyncio.sleep(1)
+        
     @commands.command()
     @commands.guild_only()
     async def craps(self, ctx: commands.Context, bet: int):
