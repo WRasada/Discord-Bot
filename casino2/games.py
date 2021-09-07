@@ -328,7 +328,7 @@ class Blackjack:
             name=_("{}'s Hand").format(ctx.author.name),
             value=hand.format(", ".join(deck.fmt_hand(ph)), count1),
         )
-        embed.add_field(name="\u200b", value=NULL, inline=False)
+        embed.add_field(name="\u200b", value="", inline=False)
         embed.add_field(
             name=_("{}'s Hand").format(ctx.bot.user.name), value=hand.format(dealer_hand, count2)
         )
